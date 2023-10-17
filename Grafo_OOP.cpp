@@ -6,7 +6,7 @@ Objetivo:
 Integrantes del equipo:
     -Angel Enrique Chavez Ponce
     -Daniela Moran
-    -Diego Romo Mu√±oz
+    -Diego Romo MuÒoz
     -Maria Fernanda Barron
     -Noe Shaddai De Luna 
     -Jesus Alejandro Luevano
@@ -15,13 +15,16 @@ To Do List:                             Status
    -Grafo en matriz                     En progreso
    -Grafo en lista                      Sin Comenzar
    -Busqueda por anchura                Sin Comenzar
-   -Busqueda por profundidad            Sin Comenzar
+   -Busqueda por profundidad            En progreso =] 
    -Grafo conexo                        Sin Comenzar
    -Djikstra                            Sin Comenzar
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #include <iostream>
 #include <vector>
+#include <list>
+#include <stack>
+
 using namespace std;
 //Tama√±o del grafo como variable global
 const int TAM = 10;
@@ -31,6 +34,7 @@ class Grafo {
     //PROPIEDADES
 public:
     int grafo [TAM][TAM];
+    
 
     Grafo() {
         //Constructor de la clase ... Por ahora no hace nada
@@ -111,6 +115,66 @@ public:
             cout << endl;
         }
     }
+    
+    void recorridoProfundidad() {
+    	int i,j, temporal, inicial;
+    	cout<<"Dame el nodo inicial: ";
+    	cin>>inicial;
+    	inicial=inicial-1;
+    	vector<vector<int> >grafoP(TAM);
+    	//Pasamos la matriz a lista de adyacencia
+    	for(i=0;i<TAM;i++){
+    		for(j=0;j<TAM;j++){
+    			if(grafo[i][j]==1){
+    				grafoP[i].push_back(j);
+				}
+			}
+		}
+		
+		bool vali;
+		
+	    std::list<int> profundo;
+	    std::list<int>::iterator it;
+	
+	    std::stack<int> pila;
+	    std::stack<int> copiaPila;
+	
+	    pila.push(inicial);
+	
+	    while (!pila.empty()) {
+	        temporal = pila.top(); // Temporal toma el primer valor de la pila
+	        pila.pop();
+	        profundo.push_back(temporal); // Le asignamos a profundo el valor de la pila
+	
+	        for (j = 0; j < grafoP[temporal].size(); j++) {
+	            // Checamos si las conexiones no est·n repetidas
+	            it = profundo.begin();
+	            vali = true;
+	            while (it != profundo.end()) {
+	                if (*it == grafoP[temporal][j])
+	                    vali = false;
+	                ++it; // Avanzar al siguiente elemento
+	            }
+	            copiaPila = pila;
+	            while (!copiaPila.empty() && vali) {
+	                if (copiaPila.top() == grafoP[temporal][j])
+	                    vali = false;
+	                copiaPila.pop();
+	            }
+	            if (vali)
+	                pila.push(grafoP[temporal][j]);
+	        }
+	    }
+	    
+	    cout<<endl<<"Elementos visitados en profundidad"<<endl;
+	    
+	    it = profundo.begin();
+	    while (it != profundo.end()) {
+	        cout <<*it+1<<endl;
+	        ++it; // Avanzar al siguiente elemento
+	    }
+		
+	}
 };
 
 
@@ -121,6 +185,7 @@ int main()
     grafo.rellenarGrafo();
     grafo.capturarGrafo();
     grafo.imprimirGrafo();
+    grafo.recorridoProfundidad();
     fflush(stdin);
     getchar();
     return 0;

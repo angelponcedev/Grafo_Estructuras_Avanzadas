@@ -28,6 +28,9 @@ To Do List:                             Status
 using namespace std;
 //Tamaño del grafo como variable global
 const int TAM = 10;
+int nodos = 0;
+
+void cuadros(int nodos, int grafo[TAM][TAM], char letras[]);
 
 //Clase en al que encapsularemos las propiedades y metodos del objeto grafo
 class Grafo {
@@ -45,6 +48,8 @@ public:
     }
 
     //METODOS
+    
+    
     void capturarGrafo() {
         int opcion;
             do {
@@ -64,9 +69,9 @@ public:
                     nodoDestino > 0 ? nodoDestino-- : nodoDestino = nodoDestino;
                     agregarArista(nodoInicio, nodoDestino);
                     break;
-                    break;
                 }
-                case 2: {
+            
+                case 2: {       
                     cout << "Captura del grafo terminada" << endl;
                     fflush(stdin);
                     getchar();
@@ -79,9 +84,10 @@ public:
                     system("cls");
                     break;
                 }
-            }
-        } while (opcion != 2);
-    }
+            
+	        } 
+	    }while (opcion != 3);
+	}
 
     void agregarArista(int nodoInicio, int nodoDestino) {
         system("cls");
@@ -175,17 +181,95 @@ public:
 	    }
 		
 	}
+	 void crearConexo(){
+    	int ar, nodo1, nodo2, cont1, contB, temp;
+        char letras[] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
+        int matAd[100][100], contN[50], ind[100], temMa[100][100], tempCon[50], diagonal[50];
+        cout << "Dame la cantidad de nodos: ";
+        cin >> nodos;
+        cout << "Dame la cantidad de aristas: ";
+        cin >> ar;
+        for (int i = 0; i < ar; i++) {
+            cout << "Valor de nodo 1: ";
+            cin >> nodo1;
+            cout << "Valor de nodo 2: ";
+            cin >> nodo2;
+            matAd[nodo1 - 1][nodo2 - 1] = 1;
+        	}
+	}
+
+    void conexo() {
+        char letras[TAM];
+        for (int i = 0; i < TAM; i++) {
+            letras[i] = 'A' + i;
+        }
+        cuadros(nodos, grafo, letras);
+    }
 };
 
+void cuadros(int nodos, int grafo[TAM][TAM], char letras[]) {
+    bool visited[TAM] = { false };
+    printf("Componentes Conexas:\n");
+
+    for (int i = 0; i < nodos; i++) {
+        if (!visited[i]) {
+            printf("V%d={%c", i + 1, letras[i]);
+            visited[i] = true;
+
+            for (int j = 0; j < nodos; j++) {
+                if (grafo[i][j] && !visited[j]) {
+                    printf(",%c", letras[j]);
+                    visited[j] = true;
+                }
+            }
+            printf("}\n");
+        }
+    }
+}
 
 int main()
 {
+	int opcion;
     Grafo grafo;
     //incializando el grafo en ceros
-    grafo.rellenarGrafo();
-    grafo.capturarGrafo();
-    grafo.imprimirGrafo();
-    grafo.recorridoProfundidad();
+    do{
+    	cout<<"Bienvenido :)"<<endl<<endl;
+    	cout<<"(1)-Ingresar Grafo"<<endl;
+    	cout<<"(2)-Lista de Adyacencia"<<endl;
+    	cout<<"(3)-Busqueda por Anchura"<<endl;
+    	cout<<"(4)-Busqueda por Profundidad"<<endl;
+    	cout<<"(5)-Grafo Conexo"<<endl;
+    	cout<<"(6)-Grafo Dijkstra"<<endl;
+    	cout<<"(7)-Verificacion de Arbol"<<endl;
+    	cout<<"(8)-Algoritmo de Prim/Kruskal"<<endl;
+    	cout<<"(0)-Salir"<<endl;
+    	cout<<endl<<"Ingrese su opcion: ";
+    	cin>>opcion;
+    	switch(opcion){
+    		case 1:
+				grafo.rellenarGrafo();
+			    grafo.capturarGrafo();
+			    grafo.imprimirGrafo();
+				break;
+    		case 2: break;
+    		case 3: break;
+    		case 4:
+				grafo.recorridoProfundidad();
+				break;
+    		case 5:
+				grafo.crearConexo();
+                grafo.conexo();
+				break;
+    		case 6: break;
+    		case 7: break;
+    		case 8: break;
+    		case 9: break;
+    		case 0: break;
+    		default: break;
+		}
+    	
+	}while(opcion!=8);
+    
     fflush(stdin);
     getchar();
     return 0;

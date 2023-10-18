@@ -1,6 +1,6 @@
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Objetivo:
-    Implmentar los algoritmos vistos en clase en un solo programa
+    Implementar los algoritmos vistos en clase en un solo programa
     Se desea la utilizacion de Git y Github, asi como OOP.
 
 Integrantes del equipo:

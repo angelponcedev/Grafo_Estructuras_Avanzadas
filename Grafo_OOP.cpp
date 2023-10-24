@@ -6,7 +6,7 @@ Objetivo:
 Integrantes del equipo:
     -Angel Enrique Chavez Ponce
     -Daniela Moran
-    -Diego Romo Mu�oz
+    -Diego Romo Muñoz
     -Maria Fernanda Barron
     -Noe Shaddai De Luna 
     -Jesus Alejandro Luevano
@@ -26,7 +26,7 @@ To Do List:                             Status
 #include <stack>
 
 using namespace std;
-//Tamaño del grafo como variable global
+//TamaÃ±o del grafo como variable global
 const int TAM = 10;
 int nodos = 0;
 
@@ -53,6 +53,7 @@ public:
     void capturarGrafo() {
         int opcion;
             do {
+                system("cls");
                 cout << "~Capturando El Grafo~" << endl;
                 cout << "1.-Agregar Arista" << endl;
                 cout << "2.-Salir" << endl;
@@ -62,9 +63,11 @@ public:
                 case 1: {
                     int nodoInicio, nodoDestino;
                     cout << "Ingrese el nodo de inicio: ";
+                    fflush(stdin);
                     cin >> nodoInicio;
                     nodoInicio > 0 ? nodoInicio-- : nodoInicio = nodoInicio;
                     cout << "Ingrese el nodo de destino: ";
+                    fflush(stdin);
                     cin >> nodoDestino;
                     nodoDestino > 0 ? nodoDestino-- : nodoDestino = nodoDestino;
                     agregarArista(nodoInicio, nodoDestino);
@@ -86,13 +89,13 @@ public:
                 }
             
 	        } 
-	    }while (opcion != 3);
+	    }while (opcion != 2);
 	}
 
     void agregarArista(int nodoInicio, int nodoDestino) {
         system("cls");
-        // Función para agregar una arista, toma como argumentos el nodo de inicio y el nodo de destino de la arista
-        if (nodoInicio >= 0 && nodoInicio < TAM - 1 && nodoDestino >= 0 && nodoDestino < TAM - 1) {
+        // FunciÃ³n para agregar una arista, toma como argumentos el nodo de inicio y el nodo de destino de la arista
+        if (nodoInicio >= 0 && nodoInicio < TAM && nodoDestino >= 0 && nodoDestino < TAM) {
             //Marcamos la conexion
             grafo[nodoInicio][nodoDestino] = 1;
         }
@@ -120,6 +123,10 @@ public:
             }
             cout << endl;
         }
+        cout<<"Presiones una tecla para salir"<<endl;
+        fflush(stdin);
+        getchar();
+        system("cls");
     }
     
     void recorridoProfundidad() {
@@ -153,7 +160,7 @@ public:
 	        profundo.push_back(temporal); // Le asignamos a profundo el valor de la pila
 	
 	        for (j = 0; j < grafoP[temporal].size(); j++) {
-	            // Checamos si las conexiones no est�n repetidas
+	            // Checamos si las conexiones no están repetidas
 	            it = profundo.begin();
 	            vali = true;
 	            while (it != profundo.end()) {
@@ -268,7 +275,7 @@ int main()
     		default: break;
 		}
     	
-	}while(opcion!=8);
+	}while(opcion!=0);
     
     fflush(stdin);
     getchar();

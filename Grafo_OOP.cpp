@@ -256,67 +256,6 @@ public:
             cout << "Arista: " << padre[i] << " - " << i << " Peso: " << grafoPrim[i][padre[i]] << endl;
         }
     }
-
-    void capturarGrafoPrim(){
-        int opcion;
-        do {
-            system("cls");
-            cout << "~Capturando El Grafo~" << endl;
-            cout << "1.-Agregar Arista" << endl;
-            cout << "2.-Salir" << endl;
-            fflush(stdin);
-            cin >> opcion;
-            switch (opcion) {
-                case 1: {
-                    int nodoInicio, nodoDestino;
-                    cout << "Ingrese el nodo de inicio: ";
-                    fflush(stdin);
-                    cin >> nodoInicio;
-                    nodoInicio > 0 ? nodoInicio-- : nodoInicio = nodoInicio;
-                    cout << "Ingrese el nodo de destino: ";
-                    fflush(stdin);
-                    cin >> nodoDestino;
-                    nodoDestino > 0 ? nodoDestino-- : nodoDestino = nodoDestino;
-                    agregarAristaPRIM(nodoInicio, nodoDestino);
-                    break;
-                }
-
-                case 2: {
-                    cout << "Captura del grafo terminada" << endl;
-                    fflush(stdin);
-                    getchar();
-                    break;
-                }
-                default: {
-                    cout << "Opcion Invalida" << endl;
-                    fflush(stdin);
-                    getchar();
-                    system("cls");
-                    break;
-                }
-
-            }
-        }while (opcion != 2);
-    }
-
-    void agregarAristaPRIM(int nodoInicio, int nodoDestino) {
-        int arista;
-        system("cls");
-        // Función para agregar una arista, toma como argumentos el nodo de inicio y el nodo de destino de la arista
-        if (nodoInicio >= 0 && nodoInicio < TAM && nodoDestino >= 0 && nodoDestino < TAM) {
-            //Marcamos la conexion
-            cout << "Ingrese el valor de la arista: ";
-            fflush(stdin);
-            cin >> arista;
-            grafoPrim[nodoInicio][nodoDestino] = arista; // Asignar el peso ingresado
-            grafoPrim[nodoDestino][nodoInicio] = arista; // Añadir también la arista inversa si es un grafo no dirigido
-        } else {
-            cout << "Nodos de inicio o destino invalidos. La arista no se puede agregar." << endl;
-            fflush(stdin);
-            getchar();
-            system("cls");
-        }
-    }
 };
 
 //Para el algo de Prim

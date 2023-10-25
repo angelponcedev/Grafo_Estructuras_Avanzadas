@@ -13,7 +13,7 @@ Integrantes del equipo:
 
 To Do List:                             Status
    -Grafo en matriz                     En progreso
-   -Grafo en lista                      En progreso
+   -Grafo en lista                      Listo
    -Busqueda por anchura                Sin Comenzar
    -Busqueda por profundidad            En progreso =] 
    -Grafo conexo                        Sin Comenzar

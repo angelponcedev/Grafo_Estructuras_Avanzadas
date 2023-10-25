@@ -12,18 +12,20 @@ Integrantes del equipo:
     -Jesus Alejandro Luevano
 
 To Do List:                             Status
-   -Grafo en matriz                     En progreso
+   -Grafo en matriz                     Listo
    -Grafo en lista                      Sin Comenzar
    -Busqueda por anchura                Sin Comenzar
    -Busqueda por profundidad            En progreso =] 
    -Grafo conexo                        Sin Comenzar
    -Djikstra                            Sin Comenzar
+   -Prim                                En progreso
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #include <iostream>
 #include <vector>
 #include <list>
 #include <stack>
+#include <climits>
 
 using namespace std;
 //TamaÃ±o del grafo como variable global
@@ -31,16 +33,22 @@ const int TAM = 10;
 int nodos = 0;
 
 void cuadros(int nodos, int grafo[TAM][TAM], char letras[]);
+int minimoPeso(int clave[], bool conjuntoMST[]);
 
 //Clase en al que encapsularemos las propiedades y metodos del objeto grafo
 class Grafo {
     //PROPIEDADES
 public:
     int grafo [TAM][TAM];
-    
+    int grafoPrim[TAM][TAM];
 
     Grafo() {
-        //Constructor de la clase ... Por ahora no hace nada
+        for (int i = 0; i < TAM; i++) {
+            for (int j = 0; j < TAM; j++) {
+                grafo[i][j] = 0;
+                grafoPrim[i][j] = 0;
+            }
+        }
     }
 
     ~Grafo() {
@@ -48,70 +56,53 @@ public:
     }
 
     //METODOS
-    
-    
+
+
     void capturarGrafo() {
         int opcion;
-            do {
-                system("cls");
-                cout << "~Capturando El Grafo~" << endl;
-                cout << "1.-Agregar Arista" << endl;
-                cout << "2.-Salir" << endl;
-                fflush(stdin);
-                cin >> opcion;
-                switch (opcion) {
+        int peso;
+        do {
+            system("cls");
+            cout << "~Capturando El Grafo~" << std::endl;
+            cout << "1.-Agregar Arista" << std::endl;
+            cout << "2.-Salir" << std::endl;
+            cin >> opcion;
+            switch (opcion) {
                 case 1: {
-                    int nodoInicio, nodoDestino;
-                    cout << "Ingrese el nodo de inicio: ";
-                    fflush(stdin);
-                    cin >> nodoInicio;
-                    nodoInicio > 0 ? nodoInicio-- : nodoInicio = nodoInicio;
-                    cout << "Ingrese el nodo de destino: ";
-                    fflush(stdin);
-                    cin >> nodoDestino;
-                    nodoDestino > 0 ? nodoDestino-- : nodoDestino = nodoDestino;
-                    agregarArista(nodoInicio, nodoDestino);
+                    int nodoInicio, nodoDestino, peso;
+                        cout << "Ingrese el nodo de inicio: ";
+                        cin >> nodoInicio;
+                    nodoInicio--;
+                        cout << "Ingrese el nodo de destino: ";
+                        cin >> nodoDestino;
+                    nodoDestino--;
+                        cout << "Ingrese el peso de la arista: ";
+                        cin >> peso;
+                    agregarArista(nodoInicio, nodoDestino, peso);
                     break;
                 }
-            
-                case 2: {       
-                    cout << "Captura del grafo terminada" << endl;
-                    fflush(stdin);
-                    getchar();
+
+                case 2: {
+                        cout << "Captura del grafo terminada" << endl;
                     break;
                 }
                 default: {
-                    cout << "Opcion Invalida" << endl;
-                    fflush(stdin);
-                    getchar();
-                    system("cls");
+                        cout << "Opcion Invalida" << endl;
                     break;
                 }
-            
-	        } 
-	    }while (opcion != 2);
-	}
+            }
+        } while (opcion != 2);
+    }
 
-    void agregarArista(int nodoInicio, int nodoDestino) {
-        system("cls");
-        // FunciÃ³n para agregar una arista, toma como argumentos el nodo de inicio y el nodo de destino de la arista
+    void agregarArista(int nodoInicio, int nodoDestino, int peso) {
         if (nodoInicio >= 0 && nodoInicio < TAM && nodoDestino >= 0 && nodoDestino < TAM) {
-            //Marcamos la conexion
             grafo[nodoInicio][nodoDestino] = 1;
+            grafo[nodoDestino][nodoInicio] = 1;
+            grafoPrim[nodoInicio][nodoDestino] = peso;
+            grafoPrim[nodoDestino][nodoInicio] = peso; // Añadir también la arista inversa si es un grafo no dirigido
         }
         else {
             cout << "Nodos de inicio o destino invalidos. La arista no se puede agregar." << endl;
-            fflush(stdin);
-            getchar();
-            system("cls");
-        }
-    }
-
-    void rellenarGrafo() {
-        for (int i = 0; i < TAM; i++) {
-            for (int j = 0; j < TAM; j++) {
-                grafo[i][j] = 0;
-            }
         }
     }
 
@@ -212,7 +203,110 @@ public:
         }
         cuadros(nodos, grafo, letras);
     }
+
+    void Prim() {
+        int padre[TAM];
+        int clave[TAM];
+        bool conjuntoMST[TAM];
+
+        for (int i = 0; i < TAM; i++) {
+            clave[i] = INT_MAX;
+            conjuntoMST[i] = false;
+        }
+
+        clave[0] = 0;
+        padre[0] = -1;
+
+        for (int contador = 0; contador < TAM - 1; contador++) {
+            int u = minimoPeso(clave, conjuntoMST);
+            conjuntoMST[u] = true;
+
+            for (int v = 0; v < TAM; v++) {
+                if (grafoPrim[u][v] && !conjuntoMST[v] && grafoPrim[u][v] < clave[v]) {
+                    padre[v] = u;
+                    clave[v] = grafoPrim[u][v];
+                }
+            }
+        }
+
+        for (int i = 1; i < TAM; i++) {
+            cout << "Arista: " << padre[i] << " - " << i << " Peso: " << grafoPrim[i][padre[i]] << endl;
+        }
+    }
+
+    void capturarGrafoPrim(){
+        int opcion;
+        do {
+            system("cls");
+            cout << "~Capturando El Grafo~" << endl;
+            cout << "1.-Agregar Arista" << endl;
+            cout << "2.-Salir" << endl;
+            fflush(stdin);
+            cin >> opcion;
+            switch (opcion) {
+                case 1: {
+                    int nodoInicio, nodoDestino;
+                    cout << "Ingrese el nodo de inicio: ";
+                    fflush(stdin);
+                    cin >> nodoInicio;
+                    nodoInicio > 0 ? nodoInicio-- : nodoInicio = nodoInicio;
+                    cout << "Ingrese el nodo de destino: ";
+                    fflush(stdin);
+                    cin >> nodoDestino;
+                    nodoDestino > 0 ? nodoDestino-- : nodoDestino = nodoDestino;
+                    agregarAristaPRIM(nodoInicio, nodoDestino);
+                    break;
+                }
+
+                case 2: {
+                    cout << "Captura del grafo terminada" << endl;
+                    fflush(stdin);
+                    getchar();
+                    break;
+                }
+                default: {
+                    cout << "Opcion Invalida" << endl;
+                    fflush(stdin);
+                    getchar();
+                    system("cls");
+                    break;
+                }
+
+            }
+        }while (opcion != 2);
+    }
+
+    void agregarAristaPRIM(int nodoInicio, int nodoDestino) {
+        int arista;
+        system("cls");
+        // Función para agregar una arista, toma como argumentos el nodo de inicio y el nodo de destino de la arista
+        if (nodoInicio >= 0 && nodoInicio < TAM && nodoDestino >= 0 && nodoDestino < TAM) {
+            //Marcamos la conexion
+            cout << "Ingrese el valor de la arista: ";
+            fflush(stdin);
+            cin >> arista;
+            grafoPrim[nodoInicio][nodoDestino] = arista; // Asignar el peso ingresado
+            grafoPrim[nodoDestino][nodoInicio] = arista; // Añadir también la arista inversa si es un grafo no dirigido
+        } else {
+            cout << "Nodos de inicio o destino invalidos. La arista no se puede agregar." << endl;
+            fflush(stdin);
+            getchar();
+            system("cls");
+        }
+    }
 };
+
+//Para el algo de Prim
+int minimoPeso(int clave[], bool conjuntoMST[]) {
+    int min = INT_MAX, min_index;
+    for (int v = 0; v < TAM; v++) {
+        if (!conjuntoMST[v] && clave[v] < min) {
+            min = clave[v];
+            min_index = v;
+        }
+    }
+    return min_index;
+}
 
 void cuadros(int nodos, int grafo[TAM][TAM], char letras[]) {
     bool visited[TAM] = { false };
@@ -237,6 +331,7 @@ void cuadros(int nodos, int grafo[TAM][TAM], char letras[]) {
 int main()
 {
 	int opcion;
+    bool grafoCapturado = false;
     Grafo grafo;
     //incializando el grafo en ceros
     do{
@@ -254,9 +349,9 @@ int main()
     	cin>>opcion;
     	switch(opcion){
     		case 1:
-				grafo.rellenarGrafo();
 			    grafo.capturarGrafo();
 			    grafo.imprimirGrafo();
+                grafoCapturado= true;
 				break;
     		case 2: break;
     		case 3: break;
@@ -269,7 +364,16 @@ int main()
 				break;
     		case 6: break;
     		case 7: break;
-    		case 8: break;
+            case 8:
+                if(grafoCapturado){
+                    grafo.Prim();
+                }
+                else{
+                    cout<<"Error: Grafo sin Pesos, capture los pesos del grafo en la Opcion 1"<<endl;
+                    fflush(stdin);
+                    getchar();
+                }
+                break;
     		case 9: break;
     		case 0: break;
     		default: break;

@@ -13,7 +13,7 @@ Integrantes del equipo:
 
 To Do List:                             Status
    -Grafo en matriz                     En progreso
-   -Grafo en lista                      Sin Comenzar
+   -Grafo en lista                      Listo
    -Busqueda por anchura                Sin Comenzar
    -Busqueda por profundidad            En progreso =] 
    -Grafo conexo                        Sin Comenzar
@@ -212,6 +212,18 @@ public:
         }
         cuadros(nodos, grafo, letras);
     }
+    
+    vector<vector<int>> listaAdy() {
+    	vector<vector<int>> listaAdyacencia(TAM);
+        for (int i = 0; i < TAM; ++i) {
+            for (int j = 0; j < TAM; ++j) {
+                if (grafo[i][j] == 1) {
+                    listaAdyacencia[i].push_back(j);
+                }
+            }
+        }
+        return listaAdyacencia;
+	}
 };
 
 void cuadros(int nodos, int grafo[TAM][TAM], char letras[]) {

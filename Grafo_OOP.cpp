@@ -338,13 +338,15 @@ int main()
                 }
                 break;
     		case 9: break;
-    		case 0: break;
+    		case 0:
+                cout<<"Saliendo"<<endl;
+                fflush(stdin);
+                getchar();
+                break;
     		default: break;
 		}
     	
 	}while(opcion!=0);
-    
-    fflush(stdin);
-    getchar();
+
     return 0;
 }

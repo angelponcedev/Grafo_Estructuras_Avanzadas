@@ -13,7 +13,7 @@ Integrantes del equipo:
 
 To Do List:                             Status
    -Grafo en matriz                     Listo
-   -Grafo en lista                      Sin Comenzar
+   -Grafo en lista                      Listo
    -Busqueda por anchura                Sin Comenzar
    -Busqueda por profundidad            En progreso =] 
    -Grafo conexo                        Sin Comenzar
@@ -103,6 +103,17 @@ public:
         }
         else {
             cout << "Nodos de inicio o destino invalidos. La arista no se puede agregar." << endl;
+            fflush(stdin);
+            getchar();
+            system("cls");
+        }
+    }
+
+    void rellenarGrafo() {
+        for (int i = 0; i < TAM; i++) {
+            for (int j = 0; j < TAM; j++) {
+                grafo[i][j] = 0;
+            }
         }
     }
 
@@ -137,11 +148,11 @@ public:
 		
 		bool vali;
 		
-	    std::list<int> profundo;
-	    std::list<int>::iterator it;
+	    list<int> profundo;
+	    list<int>::iterator it;
 	
-	    std::stack<int> pila;
-	    std::stack<int> copiaPila;
+	    stack<int> pila;
+	    stack<int> copiaPila;
 	
 	    pila.push(inicial);
 	
@@ -203,6 +214,18 @@ public:
         }
         cuadros(nodos, grafo, letras);
     }
+
+    vector<vector<int>> listaAdy() {
+    	vector<vector<int>> listaAdyacencia(TAM);
+        for (int i = 0; i < TAM; ++i) {
+            for (int j = 0; j < TAM; ++j) {
+                if (grafo[i][j] == 1) {
+                    listaAdyacencia[i].push_back(j);
+                }
+            }
+        }
+        return listaAdyacencia;
+	}
 
     void Prim() {
         int padre[TAM];
@@ -349,6 +372,7 @@ int main()
     	cin>>opcion;
     	switch(opcion){
     		case 1:
+				grafo.rellenarGrafo();
 			    grafo.capturarGrafo();
 			    grafo.imprimirGrafo();
                 grafoCapturado= true;

@@ -167,7 +167,7 @@ public:
 	        ancho.push_back(temporal); // Le asignamos a ancho el valor de la cola
 	
 	        for (j = 0; j < grafoA[temporal].size(); j++) {
-	            // Checamos si las conexiones no están repetidas
+	            // Checamos si las conexiones no estï¿½n repetidas
 	            it = ancho.begin();
 	            vali = true;
 	            while (it != ancho.end()) {
@@ -288,6 +288,14 @@ public:
                     listaAdyacencia[i].push_back(j);
                 }
             }
+        }
+        //Imprimiendo la lista
+        for (int i = 0; i < TAM; ++i) {
+        	cout<<listaAdyacencia[i]<<": ";
+            for (int j = 0; j < TAM; ++j) {
+            	cout<<" "<<listaAdyacencia[i][j];
+            }
+            cout<<endl;
         }
         return listaAdyacencia;
 	}
@@ -448,7 +456,9 @@ int main()
 			    grafo.imprimirGrafo();
                 grafoCapturado= true;
 				break;
-    		case 2: break;
+    		case 2: 
+                grafo.listaAdy();
+                break;
     		case 3:
 				grafo.recorridoAnchura();
 				break;

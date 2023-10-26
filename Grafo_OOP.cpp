@@ -31,6 +31,10 @@ using namespace std;
 //TamaÃ±o del grafo como variable global
 const int TAM = 10;
 int nodos = 0;
+//funciones de dijkstra
+int encontrarMinimaDistancia(int dist[], bool sptSet[]);
+void imprimirCamino(int parent[], int destino);
+void dijkstraproceso(int grafo[TAM][TAM], int origen, int destino);
 
 void cuadros(int nodos, int grafo[TAM][TAM], char letras[]);
 int minimoPeso(int clave[], bool conjuntoMST[]);
@@ -41,12 +45,15 @@ class Grafo {
 public:
     int grafo [TAM][TAM];
     int grafoPrim[TAM][TAM];
+    int grafodijkstra [TAM][TAM];
 
     Grafo() {
+        //Inicializando matrices en ceros
         for (int i = 0; i < TAM; i++) {
             for (int j = 0; j < TAM; j++) {
                 grafo[i][j] = 0;
                 grafoPrim[i][j] = 0;
+                grafodijkstra[i][j]=0;
             }
         }
     }
@@ -56,8 +63,6 @@ public:
     }
 
     //METODOS
-
-
     void capturarGrafo() {
         int opcion;
         int peso;
@@ -256,7 +261,90 @@ public:
             cout << "Arista: " << padre[i] << " - " << i << " Peso: " << grafoPrim[i][padre[i]] << endl;
         }
     }
+
+    //Djikstra
+    void dijkstra()
+    {
+        int opc;
+        cout << "Agrega el peso de las aristas"<< endl;
+        for (int i = 0; i < TAM; i++) {
+            for (int j = 0; j < TAM; j++) {
+                if (grafo[i][j]== 1 ){
+                    cout << "Nodo "<<i+1<<" a nodo " <<j+1<< endl;
+                    fflush(stdin);
+                    cin >> grafodijkstra[i][j];
+                }
+                else{
+                    fflush(stdin);
+                    grafodijkstra[i][j]=0;
+                }
+            }
+        }
+        cout << "Mostrar matriz de adyacencia con pesos" << endl;
+        for (int i = 0; i < TAM; i++) {
+            for (int j = 0; j < TAM; j++) {
+                cout << grafodijkstra[i][j]<<"\t";
+            }
+            cout << endl;
+        }
+        //jala bien
+        int origen = 1; // Nodo origen
+        int destino = 9; // Nodo destino
+        dijkstraproceso(grafodijkstra, origen, destino);
+    }
 };
+//Djikstra
+int encontrarMinimaDistancia(int dist[], bool sptSet[]) {
+    int min = INT_MAX, min_index;
+    for (int v = 0; v < TAM; v++) {
+        if (!sptSet[v] && dist[v] < min) {
+            min = dist[v];
+            min_index = v;
+        }
+    }
+    return min_index;
+}
+// Función para imprimir el camino más corto
+void imprimirCamino(int parent[], int destino) {
+    if (parent[destino] == -1) {
+        cout<<destino;
+        return;
+    }
+    imprimirCamino(parent, parent[destino]);
+    cout<<" -> "<< destino;
+}
+
+// Función que implementa el algoritmo de Dijkstra para encontrar el camino más corto desde un nodo origen
+void dijkstraproceso(int grafodijkstra[TAM][TAM], int origen, int destino) {
+    int dist[TAM];     // Array para almacenar las distancias más cortas
+    bool sptSet[TAM];   // Conjunto de vértices incluidos en el camino más corto
+    int parent[TAM];   // Array para almacenar el camino más corto
+    // Inicializar todas las distancias como infinito y sptSet[] como falso
+    for (int i = 0; i < TAM; i++) {
+        dist[i] = INT_MAX;
+        sptSet[i] = 0;
+        parent[i] = -1;
+    }
+    // La distancia al origen siempre es 0
+    dist[origen] = 0;
+    // Encuentra el camino más corto para todos los vértices
+    for (int count = 0; count < TAM - 1; count++) {
+        int u = encontrarMinimaDistancia(dist, sptSet);
+        sptSet[u] = 1;
+        for (int v = 0; v < TAM; v++) {
+            if (!sptSet[v] && grafodijkstra[u][v] && dist[u] != INT_MAX && (dist[u] + grafodijkstra[u][v] < dist[v])) {
+                dist[v] = dist[u] + grafodijkstra[u][v];
+                parent[v] = u;
+            }
+        }
+    }
+    // Imprimir la solución
+    cout<<"Distancia más corta desde el nodo "<< origen<< " hasta el nodo "<<destino << dist[destino]<<"\n";
+    cout<<"Camino más corto: ";
+    imprimirCamino(parent, destino);
+    printf("\n");
+}
+
 
 //Para el algo de Prim
 int minimoPeso(int clave[], bool conjuntoMST[]) {
@@ -325,7 +413,16 @@ int main()
 				grafo.crearConexo();
                 grafo.conexo();
 				break;
-    		case 6: break;
+    		case 6:
+                if(grafoCapturado){
+                    grafo.dijkstra();
+                }
+                else{
+                    cout<<"Error: Grafo sin Pesos, capture los pesos del grafo en la Opcion 1"<<endl;
+                    fflush(stdin);
+                    getchar();
+                }
+                break;
     		case 7: break;
             case 8:
                 if(grafoCapturado){
@@ -345,8 +442,6 @@ int main()
                 break;
     		default: break;
 		}
-    	
 	}while(opcion!=0);
-
     return 0;
 }

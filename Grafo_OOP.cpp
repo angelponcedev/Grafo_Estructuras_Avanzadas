@@ -25,6 +25,7 @@ To Do List:                             Status
 #include <vector>
 #include <list>
 #include <stack>
+#include <queue>
 #include <climits>
 
 using namespace std;
@@ -44,16 +45,14 @@ class Grafo {
     //PROPIEDADES
 public:
     int grafo [TAM][TAM];
-    int grafoPrim[TAM][TAM];
-    int grafodijkstra [TAM][TAM];
+    int grafoPesos[TAM][TAM];
 
     Grafo() {
         //Inicializando matrices en ceros
         for (int i = 0; i < TAM; i++) {
             for (int j = 0; j < TAM; j++) {
                 grafo[i][j] = 0;
-                grafoPrim[i][j] = 0;
-                grafodijkstra[i][j]=0;
+                grafoPesos[i][j] = 0;
             }
         }
     }
@@ -95,6 +94,7 @@ public:
                         cout << "Opcion Invalida" << endl;
                     break;
                 }
+
             }
         } while (opcion != 2);
     }
@@ -103,8 +103,8 @@ public:
         if (nodoInicio >= 0 && nodoInicio < TAM && nodoDestino >= 0 && nodoDestino < TAM) {
             grafo[nodoInicio][nodoDestino] = 1;
             grafo[nodoDestino][nodoInicio] = 1;
-            grafoPrim[nodoInicio][nodoDestino] = peso;
-            grafoPrim[nodoDestino][nodoInicio] = peso; // Añadir también la arista inversa si es un grafo no dirigido
+            grafoPesos[nodoInicio][nodoDestino] = peso;
+            grafoPesos[nodoDestino][nodoInicio] = peso; // Añadir también la arista inversa si es un grafo no dirigido
         }
         else {
             cout << "Nodos de inicio o destino invalidos. La arista no se puede agregar." << endl;
@@ -135,6 +135,66 @@ public:
         getchar();
         system("cls");
     }
+    
+    void recorridoAnchura() {
+    	int i,j, temporal, inicial;
+    	cout<<"Dame el nodo inicial: ";
+    	cin>>inicial;
+    	inicial=inicial-1;
+    	vector<vector<int> >grafoA(TAM);
+    	//Pasamos la matriz a lista de adyacencia
+    	for(i=0;i<TAM;i++){
+    		for(j=0;j<TAM;j++){
+    			if(grafo[i][j]==1){
+    				grafoA[i].push_back(j);
+				}
+			}
+		}
+		
+		bool vali;
+
+	    std::list<int> ancho;
+	    std::list<int>::iterator it;
+	
+	    std::queue<int> cola;
+	    std::queue<int> copiaCola;
+	
+	    cola.push(inicial);
+	
+	    while (!cola.empty()) {
+	        temporal = cola.front(); // Temporal toma el primer valor de la cola
+	        cola.pop();
+	        ancho.push_back(temporal); // Le asignamos a ancho el valor de la cola
+	
+	        for (j = 0; j < grafoA[temporal].size(); j++) {
+	            // Checamos si las conexiones no est�n repetidas
+	            it = ancho.begin();
+	            vali = true;
+	            while (it != ancho.end()) {
+	                if (*it == grafoA[temporal][j])
+	                    vali = false;
+	                ++it; // Avanzar al siguiente elemento
+	            }
+	            copiaCola = cola;
+	            while (!copiaCola.empty() && vali) {
+	                if (copiaCola.front() == grafoA[temporal][j])
+	                    vali = false;
+	                copiaCola.pop();
+	            }
+	            if (vali)
+	                cola.push(grafoA[temporal][j]);
+	        }
+	    }
+	    
+	    cout<<endl<<"Elementos visitados en ancho"<<endl;
+	    
+	    it = ancho.begin();
+	    while (it != ancho.end()) {
+	        cout <<*it<<endl;
+	        ++it; // Avanzar al siguiente elemento
+	    }
+		
+	}
     
     void recorridoProfundidad() {
     	int i,j, temporal, inicial;
@@ -220,8 +280,8 @@ public:
         cuadros(nodos, grafo, letras);
     }
 
-    vector<vector<int>> listaAdy() {
-    	vector<vector<int>> listaAdyacencia(TAM);
+    vector<vector<int> > listaAdy() {
+    	vector<vector<int> > listaAdyacencia(TAM);
         for (int i = 0; i < TAM; ++i) {
             for (int j = 0; j < TAM; ++j) {
                 if (grafo[i][j] == 1) {
@@ -250,47 +310,32 @@ public:
             conjuntoMST[u] = true;
 
             for (int v = 0; v < TAM; v++) {
-                if (grafoPrim[u][v] && !conjuntoMST[v] && grafoPrim[u][v] < clave[v]) {
+                if (grafoPesos[u][v] && !conjuntoMST[v] && grafoPesos[u][v] < clave[v]) {
                     padre[v] = u;
-                    clave[v] = grafoPrim[u][v];
+                    clave[v] = grafoPesos[u][v];
                 }
             }
         }
 
         for (int i = 1; i < TAM; i++) {
-            cout << "Arista: " << padre[i] << " - " << i << " Peso: " << grafoPrim[i][padre[i]] << endl;
+            cout << "Arista: " << padre[i] << " - " << i << " Peso: " << grafoPesos[i][padre[i]] << endl;
         }
     }
 
     //Djikstra
     void dijkstra()
     {
-        int opc;
-        cout << "Agrega el peso de las aristas"<< endl;
-        for (int i = 0; i < TAM; i++) {
-            for (int j = 0; j < TAM; j++) {
-                if (grafo[i][j]== 1 ){
-                    cout << "Nodo "<<i+1<<" a nodo " <<j+1<< endl;
-                    fflush(stdin);
-                    cin >> grafodijkstra[i][j];
-                }
-                else{
-                    fflush(stdin);
-                    grafodijkstra[i][j]=0;
-                }
-            }
-        }
         cout << "Mostrar matriz de adyacencia con pesos" << endl;
         for (int i = 0; i < TAM; i++) {
             for (int j = 0; j < TAM; j++) {
-                cout << grafodijkstra[i][j]<<"\t";
+                cout << grafoPesos[i][j]<<"\t";
             }
             cout << endl;
         }
         //jala bien
         int origen = 1; // Nodo origen
         int destino = 9; // Nodo destino
-        dijkstraproceso(grafodijkstra, origen, destino);
+        dijkstraproceso(grafoPesos, origen, destino);
     }
 };
 //Djikstra
@@ -307,15 +352,14 @@ int encontrarMinimaDistancia(int dist[], bool sptSet[]) {
 // Función para imprimir el camino más corto
 void imprimirCamino(int parent[], int destino) {
     if (parent[destino] == -1) {
-        cout<<destino;
         return;
     }
     imprimirCamino(parent, parent[destino]);
-    cout<<" -> "<< destino;
+    cout<<" -> "<< destino +1;
 }
 
 // Función que implementa el algoritmo de Dijkstra para encontrar el camino más corto desde un nodo origen
-void dijkstraproceso(int grafodijkstra[TAM][TAM], int origen, int destino) {
+void dijkstraproceso(int grafoPesos[TAM][TAM], int origen, int destino) {
     int dist[TAM];     // Array para almacenar las distancias más cortas
     bool sptSet[TAM];   // Conjunto de vértices incluidos en el camino más corto
     int parent[TAM];   // Array para almacenar el camino más corto
@@ -332,14 +376,14 @@ void dijkstraproceso(int grafodijkstra[TAM][TAM], int origen, int destino) {
         int u = encontrarMinimaDistancia(dist, sptSet);
         sptSet[u] = 1;
         for (int v = 0; v < TAM; v++) {
-            if (!sptSet[v] && grafodijkstra[u][v] && dist[u] != INT_MAX && (dist[u] + grafodijkstra[u][v] < dist[v])) {
-                dist[v] = dist[u] + grafodijkstra[u][v];
+            if (!sptSet[v] && grafoPesos[u][v] && dist[u] != INT_MAX && (dist[u] + grafoPesos[u][v] < dist[v])) {
+                dist[v] = dist[u] + grafoPesos[u][v];
                 parent[v] = u;
             }
         }
     }
     // Imprimir la solución
-    cout<<"Distancia más corta desde el nodo "<< origen<< " hasta el nodo "<<destino << dist[destino]<<"\n";
+    cout<<"Distancia más corta desde el nodo "<< origen<< " hasta el nodo "<<destino+1 <<"\n";
     cout<<"Camino más corto: ";
     imprimirCamino(parent, destino);
     printf("\n");
@@ -405,7 +449,9 @@ int main()
                 grafoCapturado= true;
 				break;
     		case 2: break;
-    		case 3: break;
+    		case 3:
+				grafo.recorridoAnchura();
+				break;
     		case 4:
 				grafo.recorridoProfundidad();
 				break;

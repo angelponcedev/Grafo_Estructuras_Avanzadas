@@ -24,6 +24,7 @@ To Do List:                             Status
 #include <vector>
 #include <list>
 #include <stack>
+#include <queue>
 
 using namespace std;
 //Tama√±o del grafo como variable global
@@ -86,7 +87,7 @@ public:
                 }
             
 	        } 
-	    }while (opcion != 3);
+	    }while (opcion != 2);
 	}
 
     void agregarArista(int nodoInicio, int nodoDestino) {
@@ -121,6 +122,66 @@ public:
             cout << endl;
         }
     }
+    
+    void recorridoAnchura() {
+    	int i,j, temporal, inicial;
+    	cout<<"Dame el nodo inicial: ";
+    	cin>>inicial;
+    	inicial=inicial-1;
+    	vector<vector<int> >grafoA(TAM);
+    	//Pasamos la matriz a lista de adyacencia
+    	for(i=0;i<TAM;i++){
+    		for(j=0;j<TAM;j++){
+    			if(grafo[i][j]==1){
+    				grafoA[i].push_back(j);
+				}
+			}
+		}
+		
+		bool vali;
+
+	    std::list<int> ancho;
+	    std::list<int>::iterator it;
+	
+	    std::queue<int> cola;
+	    std::queue<int> copiaCola;
+	
+	    cola.push(inicial);
+	
+	    while (!cola.empty()) {
+	        temporal = cola.front(); // Temporal toma el primer valor de la cola
+	        cola.pop();
+	        ancho.push_back(temporal); // Le asignamos a ancho el valor de la cola
+	
+	        for (j = 0; j < grafoA[temporal].size(); j++) {
+	            // Checamos si las conexiones no est·n repetidas
+	            it = ancho.begin();
+	            vali = true;
+	            while (it != ancho.end()) {
+	                if (*it == grafoA[temporal][j])
+	                    vali = false;
+	                ++it; // Avanzar al siguiente elemento
+	            }
+	            copiaCola = cola;
+	            while (!copiaCola.empty() && vali) {
+	                if (copiaCola.front() == grafoA[temporal][j])
+	                    vali = false;
+	                copiaCola.pop();
+	            }
+	            if (vali)
+	                cola.push(grafoA[temporal][j]);
+	        }
+	    }
+	    
+	    cout<<endl<<"Elementos visitados en ancho"<<endl;
+	    
+	    it = ancho.begin();
+	    while (it != ancho.end()) {
+	        cout <<*it<<endl;
+	        ++it; // Avanzar al siguiente elemento
+	    }
+		
+	}
     
     void recorridoProfundidad() {
     	int i,j, temporal, inicial;
@@ -252,7 +313,9 @@ int main()
 			    grafo.imprimirGrafo();
 				break;
     		case 2: break;
-    		case 3: break;
+    		case 3:
+				grafo.recorridoAnchura();
+				break;
     		case 4:
 				grafo.recorridoProfundidad();
 				break;
